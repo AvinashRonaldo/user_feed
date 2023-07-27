@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors');
 const sequelize = require('./init_db');
 const User =require('./models/User').User;
+const logger = require('./helpers/logger');
 
 
 
@@ -28,6 +29,7 @@ app.use(userRoutes);
  
 //Models Syncing and Server start
 sequelize.sync({backup:false}).then(async() => {
+    logger.info('Sync succesful')
     console.log("Sync success");
     const superAdmin = await User.findOne();
     if(!superAdmin){
@@ -37,9 +39,11 @@ sequelize.sync({backup:false}).then(async() => {
             email:"superadmin@email.com",
             password:"super"
         });
+        logger.info("Super Admin Created")
         console.log("Super Admin Created")
     }
     app.listen(port,() => {
+        logger.info("server up and running")
         console.log(`server starting on port ${port}`);
     })
 }).catch(err=> {

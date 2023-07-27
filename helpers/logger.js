@@ -2,6 +2,7 @@ const winston = require('winston');
 const moment = require('moment');
 const path = require('path');
 const fs = require('fs');
+require('winston-daily-rotate-file');
 
 const logDirectory = path.join(__dirname, 'logs');
 
@@ -9,6 +10,14 @@ const logDirectory = path.join(__dirname, 'logs');
 
 fs.mkdirSync(logDirectory, { recursive: true });
 
+var transport = new winston.transports.DailyRotateFile({
+    frequency:'5m',
+    filename: 'app-%DATE%.log',
+    datePattern: 'YYYY-MM-DD-HH',
+    zippedArchive: true,
+    maxSize: '20m',
+    maxFiles: '30m'
+  });
 // Function to generate the log file name with a timestamp
 const generateLogFileName = () => {
   const timestamp = moment().format('YYYY-MM-DD-HH-mm');
@@ -25,8 +34,9 @@ const logger = winston.createLogger({
     })
   ),
   transports: [
+    transport
     // Console transport for logging to console during development
-    new winston.transports.Console({
+    /* new winston.transports.Console({
       format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
     }),
     // File transport for writing logs to a log file
@@ -36,7 +46,7 @@ const logger = winston.createLogger({
       maxFiles: 5, // Maximum number of log files to keep
       tailable: true, // Rotate log files with a new timestamp
       zippedArchive: true, // Compress rotated log files
-    }),
+    }), */
   ],
 });
 

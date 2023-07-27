@@ -143,15 +143,21 @@ const grantDeleteAccessToAdmin = async(req,res)=> {
 }
  
 const getLogs = async(req,res) => {
-    const logFilePath = path.join(__dirname, 'logs', 'app.log');
-    fs.readFile(logFilePath, 'utf8', (err, data) => {
+    const logFilePath = path.join(__dirname, 'logs');
+    fs.readdir(logFilePath, (err, files) => {
     if (err) {
-      console.error('Error reading logs from file:', err);
+      console.error('Error reading logs from directory:', err);
       return res.status(500).json({ error: 'Something went wrong' });
     }
-    const logs = data.split('\n');
-    return res.status(200).json(logs);
+    const logFiles = files.filter((file) => file.startsWith('app_'));
+    const logs = [];
+    // Read each log file and extract its content
+    logFiles.forEach((file) => {
+      const logData = fs.readFileSync(path.join(logFilePath, file), 'utf8');
+      logs.push(...logData.split('\n'));
     });
+    return res.status(200).json(logs);
+  });
 }
 module.exports = {getUsers,updateUser,deleteUser,
     createUser,grantAccessToFeed,getLogs,

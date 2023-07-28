@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors');
 const sequelize = require('./init_db');
 const User =require('./models/User').User;
+const path=require('path');
 const logger = require('./helpers/logger');
 
 

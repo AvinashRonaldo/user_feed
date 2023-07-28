@@ -1,9 +1,11 @@
 const { User,UserFeeds} = require('../models/User');
-const sequelize = require('../init_db');
 const compareRoles = require('../helpers/compare');
 const bcrypt = require('bcrypt');
 const Feed = require('../models/Feed');
-const logger = require('../helpers/logger')
+const fs = require('fs');
+const path = require('path')
+const logger = require('../helpers/logger');
+require('dotenv').config();
 
 
 async function hashPassword(password) {
@@ -155,14 +157,14 @@ const grantDeleteAccessToAdmin = async(req,res)=> {
 }
  
 const getLogs = async(req,res) => {
-    const logFilePath = path.join(__dirname, 'logs');
+    const logFilePath = process.env.LOGDIRECTORY;
     fs.readdir(logFilePath, (err, files) => {
     if (err) {
         logger.info("Error");
         console.error('Error reading logs from directory:', err);
         return res.status(500).json({ error: 'Something went wrong' });
     }
-    const logFiles = files.filter((file) => file.startsWith('app_'));
+    const logFiles = files.filter((file) => file.startsWith('app-'));
     const logs = [];
     // Read each log file and extract its content
     logFiles.forEach((file) => {

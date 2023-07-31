@@ -97,10 +97,15 @@ const grantAccessToFeed = async(req,res) => {
         if (compareRoles(req.userData.role,user.role) == false) {
             return res.status(403).json({ error: 'Permission denied' });
         }
+        const check = await UserFeeds.findOne({  where: { userID: userId, feedID: feedId }
+        });
+        if(check){
+            return res.json({message:"User already has access to feed"})
+        }
         await feed.addUser(user);
         const updatedFeed = await Feed.findByPk(feedId);
         logger.info("User has granted access to feed");
-        res.status(200).json({message:updatedFeed});
+        res.status(200).json({message:`Granted access to feed ${updatedFeed.ID}`});
     } catch(err){
         console.log(err);
     }
@@ -125,7 +130,7 @@ const removeAccessToFeed = async(req,res) => {
         }
         const updatedFeed = await Feed.findByPk(feedId);
         logger.info("User has his access removed to the feed");
-        res.status(200).json({message:updatedFeed});
+        res.status(200).json({message:`Removed access to feed ${updatedFeed.ID}`});
     } catch(err){
         console.log(err);
     }
@@ -142,6 +147,9 @@ const grantDeleteAccessToAdmin = async(req,res)=> {
         if (!user || !feed) {
             logger.info("User or Feed not found");
         return res.status(404).json({ error: 'User or Feed not found' });
+        }
+        if(user.role!=='Admin'){
+            return res.status(400).json({error:'User is not Admin and cannot have delete access!'})
         }
         // Create or update the UserFeed entry to grant delete access
         const [userFeed, created] = await UserFeeds.findOrCreate({

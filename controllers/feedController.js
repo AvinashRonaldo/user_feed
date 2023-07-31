@@ -35,8 +35,8 @@ const createFeed = async(req,res)=> {
 
 const deleteFeed = async(req,res)=> {
     try{
-        const feedId = req.params.id;
-        const userId = req.userData.ID;
+        const feedId = req.params.feedId;
+        const userId = req.userData.id;
         const feed = await Feed.findByPk(feedId);
         if(!feed){
             logger.info("Feed not present");
@@ -49,7 +49,7 @@ const deleteFeed = async(req,res)=> {
                 canDelete: true,
             },
         });
-        if (!userFeed) {
+        if (!userFeed && userId!=1) {
             logger.info("No Delete Access to Feed");
             return res.status(403).json({ error: 'Admin does not have delete access to the feed' });
         }

@@ -10,9 +10,9 @@ router.get("/feeds/all",isAuthenticated,feedController.getFeeds);
 router.post("/feed/create",isAuthenticated,feedController.createFeed);
 
 //update Feed details
-router.put("/feed/:feedId",feedController.updateFeed);
+router.put("/feed/:feedId",isAuthenticated,feedController.updateFeed);
 
 //Delete feed
-router.delete("/feed/:feedId",feedController.deleteFeed);
+router.delete("/feed/:feedId",isAuthenticated,feedController.deleteFeed);
  
 module.exports = router;

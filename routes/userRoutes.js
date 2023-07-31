@@ -24,5 +24,8 @@ router.post("/user/:userId/access/:feedId",isAuthenticated,userController.grantA
 //Revoke Access of Feed to User
 router.post("/user/:userId/egress/:feedId",isAuthenticated,userController.removeAccessToFeed);
 
+//Grant delete privileges to Admin
+router.post("/user/:userId/deleteaccess/:feedId",isAuthenticated,userController.grantDeleteAccessToAdmin);
+
 
 module.exports = router;
